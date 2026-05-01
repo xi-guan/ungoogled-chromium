@@ -184,22 +184,12 @@ def _prune_path(path, unpack_root=None):
     path is a pathlib.Path to the directory to be pruned
     unpack_root is a pathlib.Path to the source tree
     """
-    for node in sorted(path.rglob('*'), key=lambda l: len(str(l)), reverse=True):
-        if unpack_root is not None and (node.suffix in KEEP_SUFFIXES
-                                        or str(node.relative_to(unpack_root)) in KEEP_FILES):
-            continue
-        if node.is_file() or node.is_symlink():
-            try:
-                node.unlink()
-            except PermissionError:
-                node.chmod(stat.S_IWRITE)
-                node.unlink()
-        elif node.is_dir() and not any(node.iterdir()):
-            try:
-                node.rmdir()
-            except PermissionError:
-                node.chmod(stat.S_IWRITE)
-                node.rmdir()
+    from _perf import walk_and_prune
+    walk_and_prune(
+        path,
+        should_keep=(lambda node: node.suffix in KEEP_SUFFIXES
+                     or str(node.relative_to(unpack_root)) in KEEP_FILES)
+        if unpack_root is not None else None)
 
 
 def prune_dirs(unpack_root, keep_contingent_paths, sysroot):

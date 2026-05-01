@@ -205,7 +205,7 @@ def should_prune(path, relative_path, used_pep_set, used_pip_set):
 
     # Do binary data detection
     with path.open('rb') as file_obj:
-        if _is_binary(file_obj.read()):
+        if _is_binary(file_obj.read(8192)):
             return True
 
     # Passed all filtering; do not prune
@@ -296,6 +296,10 @@ def compute_lists_proc(path, source_tree, search_regex):
             domain_substitution_set, symlink_set)
 
 
+def _compute_lists_proc_star(args):
+    return compute_lists_proc(*args)
+
+
 def compute_lists(source_tree, search_regex, processes): # pylint: disable=too-many-locals
     """
     Compute the binary pruning and domain substitution lists of the source tree.
@@ -316,9 +320,10 @@ def compute_lists(source_tree, search_regex, processes): # pylint: disable=too-m
 
     # Launch multiple processes iterating over the source tree
     with Pool(processes) as procpool:
-        returned_data = procpool.starmap(
-            compute_lists_proc,
-            zip(source_tree.rglob('*'), repeat(source_tree), repeat(search_regex)))
+        returned_data = list(procpool.imap_unordered(
+            _compute_lists_proc_star,
+            zip(source_tree.rglob('*'), repeat(source_tree), repeat(search_regex)),
+            chunksize=256))
 
     # Handle the returned data
     for (used_pep_set, used_pip_set, used_dep_set, used_dip_set, returned_pruning_set,

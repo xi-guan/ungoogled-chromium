@@ -323,17 +323,12 @@ def check_downloads(download_info, cache_dir, components, chunk_bytes=262144):
         get_logger().info('Verifying hashes for "%s" ...', download_name)
 
         download_path = cache_dir / download_properties.download_filename
-        for hash_name, hash_hex in _get_hash_pairs(download_properties, cache_dir):
+        from _perf import verify_hashes
+        hash_pairs = list(_get_hash_pairs(download_properties, cache_dir))
+        for hash_name, _ in hash_pairs:
             logger.info('Verifying %s hash...', hash_name)
-            hasher = hashlib.new(hash_name)
-            with download_path.open('rb') as file_obj:
-                # Read file in chunks. Default is 262144 bytes.
-                chunk = file_obj.read(chunk_bytes)
-                while chunk:
-                    hasher.update(chunk)
-                    chunk = file_obj.read(chunk_bytes)
-            if not hasher.hexdigest().lower() == hash_hex.lower():
-                raise HashMismatchError(download_path)
+        if verify_hashes(download_path, hash_pairs, chunk_bytes):
+            raise HashMismatchError(download_path)
 
 
 def unpack_downloads(download_info, cache_dir, components, output_dir, extractors=None):

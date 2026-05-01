@@ -227,21 +227,9 @@ def clone(args): # pylint: disable=too-many-branches, too-many-locals, too-many-
          str(args.output / 'tools' / 'gn' / 'bootstrap'))
 
     get_logger().info('Removing unneeded files')
-    for path in sorted(args.output.rglob('*'), key=lambda l: len(str(l)), reverse=True):
-        if not path.is_symlink() and '.git' not in path.parts:
-            if path.is_file() and (('out' in path.parts and 'node_modules' not in path.parts)
-                                   or path.name.startswith('ChangeLog')):
-                try:
-                    path.unlink()
-                except PermissionError:
-                    path.chmod(S_IWRITE)
-                    path.unlink()
-            elif path.is_dir() and not any(path.iterdir()):
-                try:
-                    path.rmdir()
-                except PermissionError:
-                    path.chmod(S_IWRITE)
-                    path.rmdir()
+    from _perf import walk_and_clean
+    walk_and_clean(args.output, should_delete=lambda p: not p.is_symlink() and (
+        ('out' in p.parts and 'node_modules' not in p.parts) or p.name.startswith('ChangeLog')))
 
     get_logger().info('Source cloning complete')
 
