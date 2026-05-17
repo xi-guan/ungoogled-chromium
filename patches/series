@@ -75,6 +75,7 @@ extra/ungoogled-chromium/enable-menu-on-reload-button.patch
 extra/ungoogled-chromium/add-flag-for-omnibox-autocomplete-filtering.patch
 extra/ungoogled-chromium/disable-dial-repeating-discovery.patch
 extra/ungoogled-chromium/remove-uneeded-ui.patch
+extra/ungoogled-chromium/disable-settings-menu-ripple.patch
 extra/ungoogled-chromium/add-flag-to-close-window-with-last-tab.patch
 extra/ungoogled-chromium/add-flag-to-convert-popups-to-tabs.patch
 extra/ungoogled-chromium/add-flag-to-disable-local-history-expiration.patch
