@@ -1,0 +1,89 @@
+--- a/services/shape_detection/text_detection_impl_mac_unittest.mm
++++ b/services/shape_detection/text_detection_impl_mac_unittest.mm
+@@ -59,7 +59,7 @@ SkBitmap CreateBitmapWithText() {
+   base::apple::ScopedCFTypeRef<CGContextRef> context(CGBitmapContextCreate(
+       nullptr, width, height, /*bitsPerComponent=*/8,
+       /*bytesPerRow=*/width * 4, rgb_colorspace.get(),
+       static_cast<CGBitmapInfo>(kCGImageAlphaPremultipliedFirst) |
+-          kCGImageByteOrder32Host));
++          kCGBitmapByteOrder32Host));
+ 
+   // Draw a white background.
+   CGContextSetRGBFillColor(context.get(), 1.0, 1.0, 1.0, 1.0);
+--- a/skia/ext/skia_utils_ios.mm
++++ b/skia/ext/skia_utils_ios.mm
+@@ -52,7 +52,7 @@ SkBitmap CGImageToSkBitmapWithColorSpace(CGImageRef image,
+   base::apple::ScopedCFTypeRef<CGContextRef> context(CGBitmapContextCreate(
+       data, size.width, size.height, 8, size.width * 4, color_space.get(),
+       static_cast<CGBitmapInfo>(kCGImageAlphaPremultipliedFirst) |
+-          kCGImageByteOrder32Host));
++          kCGBitmapByteOrder32Host));
+ #else
+ #error We require that Skia's and CoreGraphics's recommended \
+        image memory layout match.
+--- a/skia/ext/skia_utils_mac.mm
++++ b/skia/ext/skia_utils_mac.mm
+@@ -81,7 +81,7 @@ SkBitmap NSImageToSkBitmapWithColorSpace(NSImage* image,
+   base::apple::ScopedCFTypeRef<CGContextRef> context(CGBitmapContextCreate(
+       data, size.width, size.height, 8, size.width * 4, cg_color_space.get(),
+       static_cast<CGBitmapInfo>(kCGImageAlphaPremultipliedFirst) |
+-          kCGImageByteOrder32Host));
++          kCGBitmapByteOrder32Host));
+ #else
+ #error We require that Skia's and CoreGraphics's recommended \
+        image memory layout match.
+--- a/third_party/blink/renderer/platform/mac/graphics_context_canvas.mm
++++ b/third_party/blink/renderer/platform/mac/graphics_context_canvas.mm
+@@ -64,7 +64,7 @@ GraphicsContextCanvas::GraphicsContextCanvas(const SkIRect& paint_rect)
+   cg_context_.reset(CGBitmapContextCreate(
+       offscreen_.getPixels(), offscreen_.width(), offscreen_.height(), 8,
+       offscreen_.rowBytes(), color_space.get(),
+-      kCGImageByteOrder32Host |
++      kCGBitmapByteOrder32Host |
+           static_cast<CGBitmapInfo>(kCGImageAlphaPremultipliedFirst)));
+   DCHECK(cg_context_);
+ 
+--- a/ui/base/resource/resource_bundle_ios.mm
++++ b/ui/base/resource/resource_bundle_ios.mm
+@@ -127,7 +127,7 @@ UIImage* ResourceBundle::GetNativeImageNamed(int resource_id) {
+           /*data=*/nullptr, target_size.width, target_size.height, 8,
+           target_size.width * 4, color_space.get(),
+           static_cast<CGBitmapInfo>(kCGImageAlphaPremultipliedFirst) |
+-              kCGImageByteOrder32Host));
++              kCGBitmapByteOrder32Host));
+ 
+       CGRect target_rect = CGRectMake(0, 0,
+                                       target_size.width, target_size.height);
+--- a/ui/gfx/image/image_ios.mm
++++ b/ui/gfx/image/image_ios.mm
+@@ -34,7 +34,7 @@ UIImage* CreatePlaceholderUIImage(CGFloat scale) {
+       /*bitsPerComponent=*/8,
+       /*bytesPerRow=*/0, color_space.get(),
+       static_cast<CGBitmapInfo>(kCGImageAlphaPremultipliedFirst) |
+-          kCGImageByteOrder32Host));
++          kCGBitmapByteOrder32Host));
+   CGContextSetRGBFillColor(context.get(), 1.0, 0.0, 0.0, 1.0);
+   CGContextFillRect(context.get(), CGRectMake(0.0, 0.0, 16, 16));
+   base::apple::ScopedCFTypeRef<CGImageRef> cg_image(
+--- a/ui/gfx/image/image_ios_unittest.mm
++++ b/ui/gfx/image/image_ios_unittest.mm
+@@ -33,7 +33,7 @@ UIImage* CreateUIImageWithScale(CGFloat scale) {
+       nullptr, target_size.width, target_size.height, 8, target_size.width * 4,
+       color_space.get(),
+       static_cast<CGBitmapInfo>(kCGImageAlphaPremultipliedFirst) |
+-          kCGImageByteOrder32Host));
++          kCGBitmapByteOrder32Host));
+ 
+   CGRect target_rect = CGRectMake(0, 0,
+                                   target_size.width, target_size.height);
+--- a/ui/gfx/image/image_unittest_util_apple.mm
++++ b/ui/gfx/image/image_unittest_util_apple.mm
+@@ -48,7 +48,7 @@ SkColor Get1x1ImageColor(Image image) {
+           /*bitsPerComponent=*/8,
+           /*bytesPerRow=*/4, color_space.get(),
+           static_cast<CGBitmapInfo>(kCGImageAlphaPremultipliedFirst) |
+-              kCGImageByteOrder32Host));
++              kCGBitmapByteOrder32Host));
+   CGContextDrawImage(bitmap_context.get(), CGRectMake(0, 0, 1, 1),
+                      pixel_image.get());
+ 
