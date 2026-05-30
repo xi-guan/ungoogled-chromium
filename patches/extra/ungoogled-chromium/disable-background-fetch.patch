@@ -1,0 +1,17 @@
+# Disable the Background Fetch API by default.
+# Background Fetch lets a service worker run network fetches in the background,
+# persisting after the tab and browser window are closed. Removing the "stable"
+# status makes the feature default-off; it can be re-enabled at runtime with
+#   --enable-blink-features=BackgroundFetch
+# See also: https://issues.chromium.org/issues/40062121
+
+--- a/third_party/blink/renderer/platform/runtime_enabled_features.json5
++++ b/third_party/blink/renderer/platform/runtime_enabled_features.json5
+@@ -821,7 +821,6 @@
+     {
+       name: "BackgroundFetch",
+       public: true,
+-      status: "stable",
+       base_feature: "none",
+     },
+     // A developer opt-out for background page freezing.
