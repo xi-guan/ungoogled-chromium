@@ -2,11 +2,11 @@
 
 --- a/chrome/browser/ui/startup/bad_flags_prompt.cc
 +++ b/chrome/browser/ui/startup/bad_flags_prompt.cc
-@@ -88,7 +88,6 @@ const char* const kBadFlags[] = {
+@@ -89,7 +89,6 @@ const char* const kBadFlags[] = {
      sandbox::policy::switches::kDisableGpuSandbox,
      sandbox::policy::switches::kDisableLandlockSandbox,
      sandbox::policy::switches::kDisableSeccompFilterSandbox,
 -    sandbox::policy::switches::kDisableSetuidSandbox,
+     sandbox::policy::switches::kDisableWebNNCompilerSandbox,
      sandbox::policy::switches::kNoSandbox,
  #if BUILDFLAG(IS_WIN)
-     sandbox::policy::switches::kAllowThirdPartyModules,

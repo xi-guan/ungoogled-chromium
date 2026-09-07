@@ -8,7 +8,7 @@
 # Dev tools attempts to download css data
 --- a/chrome/browser/new_tab_page/one_google_bar/one_google_bar_loader_impl.cc
 +++ b/chrome/browser/new_tab_page/one_google_bar/one_google_bar_loader_impl.cc
-@@ -301,6 +301,7 @@ OneGoogleBarLoaderImpl::OneGoogleBarLoad
+@@ -291,6 +291,7 @@ OneGoogleBarLoaderImpl::OneGoogleBarLoad
  OneGoogleBarLoaderImpl::~OneGoogleBarLoaderImpl() = default;
  
  void OneGoogleBarLoaderImpl::Load(OneGoogleCallback callback) {
@@ -18,7 +18,7 @@
    // Note: If there is an ongoing request, abandon it. It's possible that
 --- a/chrome/browser/new_tab_page/promos/promo_service.cc
 +++ b/chrome/browser/new_tab_page/promos/promo_service.cc
-@@ -171,6 +171,7 @@ PromoService::PromoService(
+@@ -167,6 +167,7 @@ PromoService::PromoService(
  PromoService::~PromoService() = default;
  
  void PromoService::Refresh() {
@@ -28,7 +28,7 @@
    // via the feature params.
 --- a/chrome/browser/profile_resetter/profile_resetter.cc
 +++ b/chrome/browser/profile_resetter/profile_resetter.cc
-@@ -101,17 +101,6 @@ ProfileResetter::ProfileResetter(Profile
+@@ -103,17 +103,6 @@ ProfileResetter::ProfileResetter(Profile
        cookies_remover_(nullptr) {
    DCHECK_CALLED_ON_VALID_SEQUENCE(sequence_checker_);
    DCHECK(profile_);
@@ -122,14 +122,10 @@
  
  /**
   * Lazily loads the vscode.web-custom-data/browser.css-data.json and allows
-@@ -15,33 +14,14 @@ import * as Root from '../../core/root/r
- export class WebCustomData {
-   #data = new Map<string, CSSProperty>();
+@@ -19,18 +18,7 @@ export class WebCustomData {
+   readonly fetchPromiseForTest: Promise<unknown>;
  
--  /** The test actually needs to wait for the result */
--  readonly fetchPromiseForTest: Promise<unknown>;
--
--  constructor(remoteBase: string) {
+   constructor(remoteBase: string) {
 -    if (!remoteBase) {
 -      this.fetchPromiseForTest = Promise.resolve();
 -      return;
@@ -142,22 +138,22 @@
 -                                     }
 -                                   })
 -                                   .catch();
--  }
--
++    this.fetchPromiseForTest = Promise.resolve();
+   }
+ 
    /**
-    * Creates a fresh `WebCustomData` instance using the standard
-    * DevTools remote base.
+@@ -39,9 +27,8 @@ export class WebCustomData {
     * Throws if no valid remoteBase was found.
     */
    static create(): WebCustomData {
 -    const remoteBase = Root.Runtime.getRemoteBase();
      // Silently skip loading of the CSS data if remoteBase is not set properly.
 -    return new WebCustomData(remoteBase?.base ?? '');
-+    return new WebCustomData();
++    return new WebCustomData('');
    }
  
    /**
-@@ -54,9 +34,6 @@ export class WebCustomData {
+@@ -54,9 +41,6 @@ export class WebCustomData {
    }
  }
  

@@ -1,6 +1,6 @@
 --- a/chrome/browser/chrome_content_browser_client_navigation_throttles.cc
 +++ b/chrome/browser/chrome_content_browser_client_navigation_throttles.cc
-@@ -443,10 +443,6 @@ void CreateAndAddChromeThrottlesForNavig
+@@ -421,10 +421,6 @@ void CreateAndAddChromeThrottlesForNavig
            Profile::FromBrowserContext(context)),
        SafeSearchFactory::GetForBrowserContext(context)));
  
@@ -63,27 +63,6 @@
    DownloadItemModelData* data = DownloadItemModelData::GetOrCreate(download_);
    data->danger_level_ = danger_level;
  }
---- a/chrome/browser/extensions/api/webstore_private/webstore_private_api.cc
-+++ b/chrome/browser/extensions/api/webstore_private/webstore_private_api.cc
-@@ -913,18 +913,6 @@ void WebstorePrivateBeginInstallWithMani
- 
- void WebstorePrivateBeginInstallWithManifest3Function::
-     ReportFrictionAcceptedEvent() {
--  if (!browser_context_) {
--    return;
--  }
--  auto* metrics_collector =
--      safe_browsing::SafeBrowsingMetricsCollectorFactory::GetForProfile(
--          Profile::FromBrowserContext(browser_context_));
--  // `metrics_collector` can be null in incognito.
--  if (metrics_collector) {
--    metrics_collector->AddSafeBrowsingEventToPref(
--        safe_browsing::SafeBrowsingMetricsCollector::EventType::
--            EXTENSION_ALLOWLIST_INSTALL_BYPASS);
--  }
- }
- 
- void WebstorePrivateBeginInstallWithManifest3Function::OnInstallPromptDone(
 --- a/chrome/browser/safe_browsing/BUILD.gn
 +++ b/chrome/browser/safe_browsing/BUILD.gn
 @@ -7,6 +7,7 @@ import("//components/safe_browsing/build
@@ -94,7 +73,7 @@
    public = [
      "chrome_controller_client.h",
      "metrics/bundled_settings_metrics_provider.h",
-@@ -105,6 +106,7 @@ static_library("safe_browsing") {
+@@ -106,6 +107,7 @@ static_library("safe_browsing") {
      "//services/metrics/public/cpp:ukm_builders",
      "//services/preferences/public/cpp",
    ]
@@ -102,7 +81,7 @@
  
    if (enable_extensions) {
      deps += [ "//chrome/browser/ui/web_applications" ]
-@@ -692,6 +694,7 @@ static_library("advanced_protection") {
+@@ -713,6 +715,7 @@ static_library("advanced_protection") {
  }
  
  source_set("metrics_collector") {
@@ -110,7 +89,7 @@
    sources = [
      "safe_browsing_metrics_collector_factory.cc",
      "safe_browsing_metrics_collector_factory.h",
-@@ -711,6 +714,7 @@ source_set("metrics_collector") {
+@@ -732,6 +735,7 @@ source_set("metrics_collector") {
      "//components/safe_browsing/core/common:safe_browsing_prefs",
      "//content/public/browser",
    ]
@@ -128,7 +107,7 @@
  #include "chrome/browser/download/download_history.h"
  #include "chrome/browser/download/download_item_model.h"
  #include "chrome/browser/download/download_item_warning_data.h"
-@@ -567,20 +566,6 @@ void DownloadsDOMHandler::RemoveDownload
+@@ -566,20 +565,6 @@ void DownloadsDOMHandler::RemoveDownload
    IdSet ids;
  
    for (download::DownloadItem* download : to_remove) {
@@ -161,7 +140,7 @@
  #include "chrome/browser/ui/webui/downloads/downloads_list_tracker.h"
 --- a/chrome/renderer/chrome_content_renderer_client.cc
 +++ b/chrome/renderer/chrome_content_renderer_client.cc
-@@ -111,7 +111,6 @@
+@@ -112,7 +112,6 @@
  #include "components/pdf/common/pdf_util.h"
  #include "components/permissions/features.h"
  #include "components/safe_browsing/buildflags.h"
