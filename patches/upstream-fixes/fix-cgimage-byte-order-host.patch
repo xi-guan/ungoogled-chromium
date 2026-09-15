@@ -1,6 +1,6 @@
 --- a/services/shape_detection/text_detection_impl_mac_unittest.mm
 +++ b/services/shape_detection/text_detection_impl_mac_unittest.mm
-@@ -59,7 +59,7 @@ SkBitmap CreateBitmapWithText() {
+@@ -58,7 +58,7 @@ TEST_F(TextDetectionImplMacTest, ScanOnce) {
    base::apple::ScopedCFTypeRef<CGContextRef> context(CGBitmapContextCreate(
        nullptr, width, height, /*bitsPerComponent=*/8,
        /*bytesPerRow=*/width * 4, rgb_colorspace.get(),
@@ -67,7 +67,7 @@
    base::apple::ScopedCFTypeRef<CGImageRef> cg_image(
 --- a/ui/gfx/image/image_ios_unittest.mm
 +++ b/ui/gfx/image/image_ios_unittest.mm
-@@ -33,7 +33,7 @@ UIImage* CreateUIImageWithScale(CGFloat scale) {
+@@ -28,7 +28,7 @@ UIImage* UIImageWithSizeAndScale(CGFloat width, CGFloat height, CGFloat scale) {
        nullptr, target_size.width, target_size.height, 8, target_size.width * 4,
        color_space.get(),
        static_cast<CGBitmapInfo>(kCGImageAlphaPremultipliedFirst) |
