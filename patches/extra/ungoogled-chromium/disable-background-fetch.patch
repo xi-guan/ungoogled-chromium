@@ -7,7 +7,7 @@
 
 --- a/third_party/blink/renderer/platform/runtime_enabled_features.json5
 +++ b/third_party/blink/renderer/platform/runtime_enabled_features.json5
-@@ -821,7 +821,6 @@
+@@ -848,7 +848,6 @@
      {
        name: "BackgroundFetch",
        public: true,
