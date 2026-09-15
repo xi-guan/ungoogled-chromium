@@ -40,7 +40,7 @@ install:
 reinstall:
     #!/usr/bin/env bash
     set -euo pipefail
-    rm -rf "{{macos_repo}}/build/src" "{{macos_repo}}/build/domsubcache.tar.gz"
+    rm -rf "{{macos_repo}}/build/src" "{{macos_repo}}/build/domsubcache.tar.gz" "{{macos_repo}}/build/.setup-complete"
     ./build_macos.sh
 
 # remove Chromium from /Applications
@@ -109,7 +109,7 @@ _clean-disk:
     selected=$(printf '%s\n' "${items[@]}" | fzf --multi --header="Select items to clean (TAB to toggle, ENTER to confirm)")
     [[ -z "$selected" ]] && exit 0
     if echo "$selected" | grep -q "^build-source"; then
-        rm -rf "{{src}}" "{{macos_repo}}/build/domsubcache.tar.gz"
+        rm -rf "{{src}}" "{{macos_repo}}/build/domsubcache.tar.gz" "{{macos_repo}}/build/.setup-complete"
         echo "✓ Removed build source"
     elif echo "$selected" | grep -q "^build-output"; then
         rm -rf "{{src}}/out/Default"
