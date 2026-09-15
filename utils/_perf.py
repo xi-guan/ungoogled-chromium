@@ -64,14 +64,14 @@ def verify_hashes(file_path, hash_pairs, chunk_bytes=262144):
     if not hash_pairs:
         return None
     hashers = [(name, expected, hashlib.new(name)) for name, expected in hash_pairs]
-    with file_path.open('rb') as f:
+    with file_path.open('rb') as handle:
         while True:
-            chunk = f.read(chunk_bytes)
+            chunk = handle.read(chunk_bytes)
             if not chunk:
                 break
-            for _, _, h in hashers:
-                h.update(chunk)
-    for name, expected, h in hashers:
-        if h.hexdigest().lower() != expected.lower():
+            for _, _, hasher in hashers:
+                hasher.update(chunk)
+    for name, expected, hasher in hashers:
+        if hasher.hexdigest().lower() != expected.lower():
             return name
     return None

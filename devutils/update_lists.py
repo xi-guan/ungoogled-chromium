@@ -320,10 +320,11 @@ def compute_lists(source_tree, search_regex, processes): # pylint: disable=too-m
 
     # Launch multiple processes iterating over the source tree
     with multiprocessing.Pool(processes) as procpool:
-        returned_data = list(procpool.imap_unordered(
-            _compute_lists_proc_star,
-            zip(source_tree.rglob('*'), repeat(source_tree), repeat(search_regex)),
-            chunksize=256))
+        returned_data = list(
+            procpool.imap_unordered(_compute_lists_proc_star,
+                                    zip(source_tree.rglob('*'), repeat(source_tree),
+                                        repeat(search_regex)),
+                                    chunksize=256))
 
     # Handle the returned data
     for (used_pep_set, used_pip_set, used_dep_set, used_dip_set, returned_pruning_set,

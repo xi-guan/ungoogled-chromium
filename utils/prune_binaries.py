@@ -190,12 +190,11 @@ def _prune_path(path, unpack_root=None):
     path is a pathlib.Path to the directory to be pruned
     unpack_root is a pathlib.Path to the source tree
     """
-    from _perf import walk_and_prune
+    from _perf import walk_and_prune # pylint: disable=import-outside-toplevel
     walk_and_prune(
         path,
-        should_keep=(lambda node: node.suffix in KEEP_SUFFIXES
-                     or str(node.relative_to(unpack_root)) in KEEP_FILES)
-        if unpack_root is not None else None)
+        should_keep=(lambda node: node.suffix in KEEP_SUFFIXES or str(node.relative_to(unpack_root))
+                     in KEEP_FILES) if unpack_root is not None else None)
 
 
 def prune_dirs(unpack_root, keep_contingent_paths, sysroot):

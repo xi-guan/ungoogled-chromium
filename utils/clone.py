@@ -14,7 +14,6 @@ from argparse import ArgumentParser
 from os import environ, pathsep
 from pathlib import Path
 from shutil import copytree, copy, move
-from stat import S_IWRITE
 from subprocess import run
 
 from _common import ENCODING, add_common_params, get_chromium_version, get_logger
@@ -234,9 +233,11 @@ def clone(args): # pylint: disable=too-many-branches, too-many-locals, too-many-
          str(args.output / 'tools' / 'gn' / 'bootstrap'))
 
     get_logger().info('Removing unneeded files')
-    from _perf import walk_and_clean
-    walk_and_clean(args.output, should_delete=lambda p: not p.is_symlink() and (
-        ('out' in p.parts and 'node_modules' not in p.parts) or p.name.startswith('ChangeLog')))
+    from _perf import walk_and_clean # pylint: disable=import-outside-toplevel
+    walk_and_clean(
+        args.output,
+        should_delete=lambda p: not p.is_symlink() and (
+            ('out' in p.parts and 'node_modules' not in p.parts) or p.name.startswith('ChangeLog')))
 
     get_logger().info('Source cloning complete')
 

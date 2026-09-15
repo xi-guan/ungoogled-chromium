@@ -323,7 +323,7 @@ def check_downloads(download_info, cache_dir, components, chunk_bytes=262144):
         get_logger().info('Verifying hashes for "%s" ...', download_name)
 
         download_path = cache_dir / download_properties.download_filename
-        from _perf import verify_hashes
+        from _perf import verify_hashes # pylint: disable=import-outside-toplevel
         hash_pairs = list(_get_hash_pairs(download_properties, cache_dir))
         for hash_name, _ in hash_pairs:
             logger.info('Verifying %s hash...', hash_name)
