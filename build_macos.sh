@@ -197,25 +197,9 @@ _setup() {
     run_quiet "Unpack arm64 toolchain" \
         python3 "$_MAIN/utils/downloads.py" unpack -i "$_ROOT/downloads-arm64.ini" -c "$_DOWNLOAD_CACHE" "$_SRC"
 
-    python3 "$_MAIN/utils/downloads.py" retrieve -i "$_ROOT/downloads-arm64-rustlib.ini" -c "$_DOWNLOAD_CACHE"
-    rm -rf "$_SRC/third_party/rust-toolchain/rustc/lib/rustlib/aarch64-apple-darwin"
-    run_quiet "Unpack rustlib" \
-        python3 "$_MAIN/utils/downloads.py" unpack -i "$_ROOT/downloads-arm64-rustlib.ini" -c "$_DOWNLOAD_CACHE" "$_SRC"
-
     log_info "Setup toolchain symlinks"
-    _RUST_DIR="$_SRC/third_party/rust-toolchain"
-    _RUST_BIN="$_RUST_DIR/bin"
-    _RUST_NAME="aarch64-apple-darwin"
-    mkdir -p "$_RUST_BIN" "$_RUST_DIR/lib"
-    ln -sf "$_RUST_DIR/rustc/bin/rustc" "$_RUST_BIN/rustc"
-    ln -sf "$_RUST_DIR/cargo/bin/cargo" "$_RUST_BIN/cargo"
-    ln -sf "$_RUST_DIR/rustfmt-preview/bin/rustfmt" "$_RUST_BIN/rustfmt"
-    ln -sf "$_RUST_DIR/rust-std-$_RUST_NAME/lib/rustlib/$_RUST_NAME/lib" "$_RUST_DIR/rustc/lib/rustlib/$_RUST_NAME/lib"
-    ln -sf "$_RUST_DIR/rustc/lib" "$_RUST_DIR/rustfmt-preview/lib"
-
     _LLVM_BIN="$_SRC/third_party/llvm-build/Release+Asserts/bin"
     ln -sf "$_LLVM_BIN/llvm-install-name-tool" "$_LLVM_BIN/install_name_tool"
-    ln -sf "$_LLVM_BIN/llvm-objcopy" "$_RUST_BIN/rust-objcopy"
 
     cd "$_SRC"
     export PATH="$_SRC/third_party/rust-toolchain/bin:$PATH"
@@ -244,10 +228,25 @@ _setup() {
         log_done "Dawn go toolchain: $(go env GOROOT)"
     fi
 
+    # chromium 153 points gn's script_executable at a cipd python that tarballs omit
+    _py_host="$_SRC/third_party/cpython3/host"
+    if [[ ! -x "$_py_host/bin/python3" ]]; then
+        _py_ver=$(sed -n "s/^ *'cpython3_version': '\(.*\)',\$/\1/p" "$_SRC/DEPS")
+        if [[ -z "$_py_ver" ]]; then
+            log_error "cannot read cpython3_version from $_SRC/DEPS"
+            exit 1
+        fi
+        _py_zip="$_DOWNLOAD_CACHE/cpython3-${_py_ver##*@}.zip"
+        [[ -s "$_py_zip" ]] || run_quiet "Download hermetic python" \
+            curl -fL --retry 3 -o "$_py_zip" \
+            "https://chrome-infra-packages.appspot.com/dl/infra/3pp/tools/cpython3/mac-arm64/+/$_py_ver"
+        mkdir -p "$_py_host"
+        run_quiet "Unpack hermetic python" unzip -q -o "$_py_zip" -d "$_py_host"
+        unset _py_ver _py_zip
+    fi
+
     run_quiet "Bootstrap GN" \
         ./tools/gn/bootstrap/bootstrap.py -o out/Default/gn --skip-generate-buildfiles
-    run_quiet "Build bindgen" \
-        ./tools/rust/build_bindgen.py --skip-test
     run_quiet "GN gen" \
         ./out/Default/gn gen out/Default --fail-on-unused-args
 
