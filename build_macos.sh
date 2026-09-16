@@ -128,6 +128,22 @@ GN
     unset _api_key _api_key_src
 }
 
+# DEPS pulls these from cipd at the version it pins, and the source tarballs ship neither
+_fetch_cipd() {
+    local package="$1" version="$2" dest="$3" name
+    name="$(basename "$package")"
+    if [[ -z "$version" ]]; then
+        log_error "cannot read the pinned version of $package from $_SRC/DEPS"
+        exit 1
+    fi
+    local zip="$_DOWNLOAD_CACHE/$name-${version##*@}.zip"
+    [[ -s "$zip" ]] || run_quiet "Download $name" \
+        curl -fL --retry 3 -o "$zip" \
+        "https://chrome-infra-packages.appspot.com/dl/$package/+/$version"
+    mkdir -p "$dest"
+    run_quiet "Unpack $name" unzip -q -o "$zip" -d "$dest"
+}
+
 # identifies a finished tree: the chromium version plus every patch applied to it
 _tree_signature() {
     {
@@ -228,21 +244,16 @@ _setup() {
         log_done "Dawn go toolchain: $(go env GOROOT)"
     fi
 
-    # chromium 153 points gn's script_executable at a cipd python that tarballs omit
-    _py_host="$_SRC/third_party/cpython3/host"
-    if [[ ! -x "$_py_host/bin/python3" ]]; then
-        _py_ver=$(sed -n "s/^ *'cpython3_version': '\(.*\)',\$/\1/p" "$_SRC/DEPS")
-        if [[ -z "$_py_ver" ]]; then
-            log_error "cannot read cpython3_version from $_SRC/DEPS"
-            exit 1
-        fi
-        _py_zip="$_DOWNLOAD_CACHE/cpython3-${_py_ver##*@}.zip"
-        [[ -s "$_py_zip" ]] || run_quiet "Download hermetic python" \
-            curl -fL --retry 3 -o "$_py_zip" \
-            "https://chrome-infra-packages.appspot.com/dl/infra/3pp/tools/cpython3/mac-arm64/+/$_py_ver"
-        mkdir -p "$_py_host"
-        run_quiet "Unpack hermetic python" unzip -q -o "$_py_zip" -d "$_py_host"
-        unset _py_ver _py_zip
+    # 153 runs gn's script_executable from here, and devtools drives tsc from the other
+    if [[ ! -x "$_SRC/third_party/cpython3/host/bin/python3" ]]; then
+        _fetch_cipd infra/3pp/tools/cpython3/mac-arm64 \
+            "$(sed -n "s/^ *'cpython3_version': '\(.*\)',\$/\1/p" "$_SRC/DEPS")" \
+            "$_SRC/third_party/cpython3/host"
+    fi
+    if [[ ! -e "$_SRC/third_party/typescript/mac-arm64/src/lib/tsc" ]]; then
+        _fetch_cipd chromium/third_party/typescript/mac-arm64 \
+            "$(sed -n "/'chromium\/third_party\/typescript\/mac-arm64'/,/}/s/.*'version': '\(.*\)',\$/\1/p" "$_SRC/DEPS")" \
+            "$_SRC/third_party/typescript/mac-arm64/src"
     fi
 
     run_quiet "Bootstrap GN" \
