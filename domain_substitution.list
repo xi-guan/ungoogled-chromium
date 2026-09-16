@@ -4241,8 +4241,6 @@ components/translate/content/browser/contextual_translate_delegate_unittest.cc
 components/translate/content/browser/partial_translate_manager_unittest.cc
 components/translate/core/browser/translate_language_list_unittest.cc
 components/translate/core/browser/translate_ranker_impl.cc
-components/translate/core/browser/translate_script.cc
-components/translate/core/common/translate_util.cc
 components/translate_strings.grdp
 components/trusted_vault/command_line_switches.cc
 components/trusted_vault/recovery_key_store_certificate.cc
