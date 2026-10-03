@@ -46,6 +46,7 @@ To keep rebases conflict-free, avoid editing upstream files:
 
 - fork patches live in `patches-fork/` with their own `series`, applied after upstream's and macOS's
 - to change an upstream patch, add a fork patch that adjusts its result instead of editing it
+- `domain_substitution.list` exclusions are filtered in `build_macos.sh`
 
 ## Environment Variables
 
