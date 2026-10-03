@@ -199,8 +199,11 @@ _setup() {
     run_quiet "Apply patches" \
         python3 "$_MAIN/utils/patches.py" apply "$_SRC" "$_MAIN/patches" "$_ROOT/patches" "$_MAIN/patches-fork"
 
+    # translate needs its real google endpoints, so its two url files skip substitution
+    grep -vxF -e components/translate/core/browser/translate_script.cc -e components/translate/core/common/translate_util.cc \
+        "$_MAIN/domain_substitution.list" > "$_ROOT/build/domain_substitution.list"
     run_quiet "Domain substitution" \
-        python3 "$_MAIN/utils/domain_substitution.py" apply -r "$_MAIN/domain_regex.list" -f "$_MAIN/domain_substitution.list" -c "$_ROOT/build/domsubcache.tar.gz" "$_SRC"
+        python3 "$_MAIN/utils/domain_substitution.py" apply -r "$_MAIN/domain_regex.list" -f "$_ROOT/build/domain_substitution.list" -c "$_ROOT/build/domsubcache.tar.gz" "$_SRC"
 
     _configure
 
