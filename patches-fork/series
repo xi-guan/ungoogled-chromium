@@ -1,2 +1,3 @@
 fix-cgimage-byte-order-host.patch
 fix-nsscreen-display-id.patch
+disable-settings-menu-ripple.patch
