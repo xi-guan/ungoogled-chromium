@@ -1,0 +1,12 @@
+# Disable Material Design ripple animation on settings sidebar menu items
+--- a/chrome/browser/resources/settings/settings_menu/settings_menu.html
++++ b/chrome/browser/resources/settings/settings_menu/settings_menu.html
+@@ -1,4 +1,8 @@
+     <style include="cr-hidden-style cr-icons cr-nav-menu-item-style">
++      cr-ripple {
++        display: none;
++      }
++
+       :host {
+         box-sizing: border-box;
+         display: block;
