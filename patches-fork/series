@@ -3,3 +3,4 @@ fix-nsscreen-display-id.patch
 disable-settings-menu-ripple.patch
 disable-background-fetch.patch
 enable-translate-by-default.patch
+fix-pvt-devtools-protocol.patch
