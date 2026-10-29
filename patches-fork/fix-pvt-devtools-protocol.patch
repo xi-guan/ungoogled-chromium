@@ -1,0 +1,17 @@
+# macos/fix-disable-verification-token.patch strips the PVT methods from StorageHandler,
+# but 156.0.8078.73 still asks the protocol generator for them, leaving StorageHandler abstract.
+--- a/chrome/browser/devtools/inspector_protocol_config.json
++++ b/chrome/browser/devtools/inspector_protocol_config.json
+@@ -49,9 +49,9 @@
+             },
+             {
+                 "domain": "Storage",
+-                "include": ["runBounceTrackingMitigations", "getPrivateVerificationTokens", "getPrivateVerificationTokensIssuerConfigs", "clearPrivateVerificationTokens", "deletePrivateVerificationToken", "setPrivateVerificationTokensTracking"],
+-                "include_events": ["privateVerificationTokensUpdated"],
+-                "async": ["runBounceTrackingMitigations", "getPrivateVerificationTokens", "clearPrivateVerificationTokens", "deletePrivateVerificationToken"]
++                "include": ["runBounceTrackingMitigations"],
++                "include_events": [],
++                "async": ["runBounceTrackingMitigations"]
+             },
+             {
+                 "domain": "SystemInfo",
